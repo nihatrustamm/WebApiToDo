@@ -1,4 +1,4 @@
-﻿namespace TO_DO.Models;
+﻿namespace TO_DO;
 
 public enum TransactionStatus
 {
