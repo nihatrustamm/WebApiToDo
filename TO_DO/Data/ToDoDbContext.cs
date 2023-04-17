@@ -7,7 +7,9 @@ public class ToDoDbContext : IdentityDbContext
 {
     public ToDoDbContext(DbContextOptions<ToDoDbContext> options) : base(options)
     {
+        Database.EnsureCreated();
     }
     public DbSet<ToDoItem> ToDoItems => Set<ToDoItem>();
     public DbSet<AppUser> AppUsers => Set<AppUser>();
+    public DbSet<Transaction> Transactions => Set<Transaction>();
 }

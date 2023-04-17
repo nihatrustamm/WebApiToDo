@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Quartz;
+
 using System.Text;
 using TO_DO.Data;
 
@@ -8,7 +10,7 @@ public class DatabaseClearJob : IHostedService
 {
     private readonly ILogger _logger;
     private readonly IServiceProvider _provider;
- 
+
 
     public DatabaseClearJob(ILogger<DatabaseClearJob> logger, IServiceProvider provider)
     {
@@ -45,4 +47,27 @@ public class DatabaseClearJob : IHostedService
         _run = false;
         return Task.CompletedTask;
     }
+}
+
+
+public class DatabaseClearCronJob : IJob
+{
+    private readonly ILogger _logger;
+    private readonly IServiceProvider _provider;
+
+    public DatabaseClearCronJob(ILogger<DatabaseClearCronJob> logger, IServiceProvider provider)
+    {
+        _logger = logger;
+        _provider = provider;
+    }
+
+    public async Task Execute(IJobExecutionContext context)
+    {
+        var scope = _provider.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ToDoDbContext>();
+        _logger.LogError("Transaction Prosessor service is running");
+        
+    }
+
+    
 }

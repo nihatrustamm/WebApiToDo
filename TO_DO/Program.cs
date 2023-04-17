@@ -9,6 +9,7 @@ using TO_DO.DTOs.Validation;
 using Serilog;
 using Serilog.Events;
 using TO_DO.HostedServices;
+using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -21,10 +22,24 @@ var builder = WebApplication.CreateBuilder(args);
 //}
 //);
 
-builder.Services.AddHostedService<DatabaseClearJob>();
-builder.Services.AddSingleton<MessageQueue>();
-builder.Services.AddHostedService<TransactionProcessorJob>();
+//builder.Services.AddHostedService<DatabaseClearJob>();
+//builder.Services.AddSingleton<MessageQueue>();
+//builder.Services.AddHostedService<TransactionProcessorJob>();
+//builder.Services.AddHostedService<ResetTransActionStatusBackgroundService>();
+builder.Services.AddQuartz(q =>
+{
+    
+    q.UseMicrosoftDependencyInjectionJobFactory();
+    q.ScheduleJob<DatabaseClearCronJob>(trigger => trigger.WithCronSchedule("* * * * * ?"));
+});
 
+builder.Services.AddQuartzServer(options =>
+{
+    options.WaitForJobsToComplete = true;
+    
+
+
+});
 Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.WithThreadId()
@@ -37,6 +52,7 @@ Log.Logger = new LoggerConfiguration()
                 //.WriteTo.File("logs/myapp.txt", rollingInterval: RollingInterval.Day)
                 .CreateLogger();
 builder.Host.UseSerilog();
+
 
 
 builder.Services.AddDbContext<ToDoDbContext>(options =>
