@@ -60,6 +60,8 @@ builder.Services.AddDbContext<ToDoDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("TO_DOContext"));
 });
 
+builder.Services.AddScoped<IEmailSender, EmailSender>();
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
